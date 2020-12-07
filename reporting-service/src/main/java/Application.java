@@ -1,23 +1,56 @@
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+//Consumer 2 - reporting service (Receives Kafka messages with information on all transactions from the valid-transactions and suspicious-transactions topics)
 public class Application {
 
+    private static final String TOPIC1 = "valid-transactions";
+    private static final String TOPIC2 = "suspicious-transactions";
+
+    private static final String BOOTSTRAP_SERVER = "localhost:9092, localhost:9093, localhost:9094";
+
     public static void main(String[] args) {
-        //*****************
-        // YOUR CODE HERE
-        //*****************
+        Application kafkaConsumerApp = new Application();
+
+        String consumerGroup = "reporting service group";
+
+        if (args.length == 1) {
+            consumerGroup = args[0];
+        }
+
+        System.out.println("Consumer is part of consumer group " + consumerGroup);
+
+        // Create consumer
+        Consumer<String, Transaction> kafkaConsumer = kafkaConsumerApp.createKafkaConsumer(BOOTSTRAP_SERVER, consumerGroup);
+
+        //kafkaConsumerApp.consumeMessages(TOPIC1, kafkaConsumer);
+        //kafkaConsumerApp.consumeMessages(TOPIC2, kafkaConsumer);
     }
 
     public static void consumeMessages(List<String> topics, Consumer<String, Transaction> kafkaConsumer) {
-        //*****************
-        // YOUR CODE HERE
-        //*****************
+        //kafkaConsumer.subscribe(Collections.singletonList(topic));
+
+        // To continually consume message from the topic
+        while(true){
+            ConsumerRecords<String, Transaction> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
+
+            if(consumerRecords.isEmpty()) {
+                //do something
+            }
+
+            for(ConsumerRecord<String, Transaction> record: consumerRecords){
+                System.out.println(String.format("Record with (user name : %s ", record.key()));
+            }
+
+            //do some processing
+
+            kafkaConsumer.commitAsync();
+        }
     }
 
     public static Consumer<String, Transaction> createKafkaConsumer(String bootstrapServers, String consumerGroup) {
@@ -33,12 +66,10 @@ public class Application {
     }
 
     private static void recordTransactionForReporting(String topic, Transaction transaction) {
-        // Print transaction information to the console
         // Print a different message depending on whether transaction is suspicious or valid
+        // Prints all transaction information to the screen, using a different message for suspicious and valid transactions
 
-        //*****************
-        // YOUR CODE HERE
-        //*****************
+        System.out.println(String.format("Record Received (user name : %s, amount: %f, address :%s)"));
     }
 
 }
