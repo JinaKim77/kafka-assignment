@@ -2,9 +2,7 @@ import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 //Consumer 2 - reporting service (Receives Kafka messages with information on all transactions from the valid-transactions and suspicious-transactions topics)
 public class Application {
@@ -17,6 +15,10 @@ public class Application {
     public static void main(String[] args) {
         Application kafkaConsumerApp = new Application();
 
+        ArrayList<String> topics = new ArrayList<String>();
+        topics.add(TOPIC1);
+        topics.add(TOPIC2);
+
         String consumerGroup = "reporting service group";
 
         if (args.length == 1) {
@@ -28,12 +30,12 @@ public class Application {
         // Create consumer
         Consumer<String, Transaction> kafkaConsumer = kafkaConsumerApp.createKafkaConsumer(BOOTSTRAP_SERVER, consumerGroup);
 
-        //kafkaConsumerApp.consumeMessages(TOPIC1, kafkaConsumer);
-        //kafkaConsumerApp.consumeMessages(TOPIC2, kafkaConsumer);
+        kafkaConsumerApp.consumeMessages(topics, kafkaConsumer);
     }
 
     public static void consumeMessages(List<String> topics, Consumer<String, Transaction> kafkaConsumer) {
-        //kafkaConsumer.subscribe(Collections.singletonList(topic));
+        kafkaConsumer.subscribe(Arrays.asList(topics.get(0),topics.get(1)));
+
 
         // To continually consume message from the topic
         while(true){
@@ -44,7 +46,12 @@ public class Application {
             }
 
             for(ConsumerRecord<String, Transaction> record: consumerRecords){
-                System.out.println(String.format("Record with (user name : %s ", record.key()));
+                //System.out.println(String.format("Record with (user name : %s) received ", record.key()));
+                Transaction transaction = record.value();
+                String topic = record.key();  //Should be working this line again to access topic name
+
+                //Call this method to print
+                Application.recordTransactionForReporting(topic, transaction);
             }
 
             //do some processing
@@ -69,7 +76,8 @@ public class Application {
         // Print a different message depending on whether transaction is suspicious or valid
         // Prints all transaction information to the screen, using a different message for suspicious and valid transactions
 
-        System.out.println(String.format("Record Received (user name : %s, amount: %f, address :%s)"));
+        System.out.println(String.format("Record Received (user name : %s, amount: %f, address :%s from topic name: %s)",
+                transaction.getUser(),transaction.getAmount(),transaction.getTransactionLocation(),topic ));
     }
 
 }

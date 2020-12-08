@@ -41,7 +41,9 @@ public class Application {
             }
 
             for(ConsumerRecord<String, Transaction> record: consumerRecords){
-                System.out.println(String.format("Record with (user name : %s ", record.key()));
+                //System.out.println(String.format("Record with (user name : %s ", record.key()));
+                Transaction transaction = record.value();
+                approveTransaction(transaction);
             }
 
             //do some processing
@@ -69,7 +71,8 @@ public class Application {
     private static void approveTransaction(Transaction transaction) {
         // Prints valid transaction information to the screen.
 
-        System.out.println(String.format("Record Received (user name : %s, amount: %f, address :%s)"));
+        System.out.println(String.format("Record Received (user name : %s, amount: %f, address :%s)",
+                transaction.getUser(),transaction.getAmount(),transaction.getTransactionLocation()));
 
     }
 

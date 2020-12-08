@@ -78,10 +78,9 @@ public class Application {
                 System.out.println("locations match");
                 //System.out.println("it's a valid transaction, the message should be sent to the valid -transactions topic");
 
-                // There are 2 topics (valid-transactions, suspicious-transactions)
                 // Create records to be sent to Kafka
-                ProducerRecord<String, Transaction> record1 = new ProducerRecord<>(TOPIC1, key,value);
-                RecordMetadata recordMetadata1 = kafkaProducer.send(record1).get();  // to valid-transactions
+                ProducerRecord<String, Transaction> record = new ProducerRecord<>(TOPIC1, key,value);
+                RecordMetadata recordMetadata = kafkaProducer.send(record).get();  // to valid-transactions
 
                 //System.out.println(String.format("%s %f %s",usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
 
@@ -90,10 +89,9 @@ public class Application {
                 System.out.println("locations don't match");
                 //System.out.println("it's a suspicious transaction, the message should be sent to the suspicious-transactions topic");
 
-                // There are 2 topics (valid-transactions, suspicious-transactions)
                 // Create records to be sent to Kafka
-                ProducerRecord<String, Transaction> record2 = new ProducerRecord<>(TOPIC2, key,value);
-                RecordMetadata recordMetadata2 = kafkaProducer.send(record2).get();  // to suspicious-transactions
+                ProducerRecord<String, Transaction> record = new ProducerRecord<>(TOPIC2, key,value);
+                RecordMetadata recordMetadata = kafkaProducer.send(record).get();  // to suspicious-transactions
 
                 //System.out.println(String.format("%s %f %s",usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
 
