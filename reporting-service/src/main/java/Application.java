@@ -48,7 +48,7 @@ public class Application {
             for(ConsumerRecord<String, Transaction> record: consumerRecords){
                 //System.out.println(String.format("Record with (user name : %s) received ", record.key()));
                 Transaction transaction = record.value();
-                String topic = record.key();  //Should be working this line again to access topic name
+                String topic = record.topic();
 
                 //Call this method to print
                 Application.recordTransactionForReporting(topic, transaction);

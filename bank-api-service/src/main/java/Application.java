@@ -79,26 +79,25 @@ public class Application {
                 //System.out.println("it's a valid transaction, the message should be sent to the valid -transactions topic");
 
                 // Create records to be sent to Kafka
-                ProducerRecord<String, Transaction> record = new ProducerRecord<>(TOPIC1, key,value);
-                RecordMetadata recordMetadata = kafkaProducer.send(record).get();  // to valid-transactions
+                ProducerRecord<String, Transaction> record1 = new ProducerRecord<>(TOPIC1, key,value);
+                RecordMetadata recordMetadata1 = kafkaProducer.send(record1).get();  // to valid-transactions
 
                 //System.out.println(String.format("%s %f %s",usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
 
-                System.out.println(String.format("Record with (user name : %s, amount: %f, address :%s) was sent to -> valid -transactions topic", usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
+                System.out.println(String.format("Record with (user name : %s, amount: %f, address :%s) was sent to -> %s topic", usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation(),TOPIC1));
             }else{
                 System.out.println("locations don't match");
                 //System.out.println("it's a suspicious transaction, the message should be sent to the suspicious-transactions topic");
 
                 // Create records to be sent to Kafka
-                ProducerRecord<String, Transaction> record = new ProducerRecord<>(TOPIC2, key,value);
-                RecordMetadata recordMetadata = kafkaProducer.send(record).get();  // to suspicious-transactions
+                ProducerRecord<String, Transaction> record2 = new ProducerRecord<>(TOPIC2, key,value);
+                RecordMetadata recordMetadata2 = kafkaProducer.send(record2).get();  // to suspicious-transactions
 
                 //System.out.println(String.format("%s %f %s",usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
 
-                System.out.println(String.format("Record with (user name : %s, amount: %f, address :%s) was sent to -> suspicious-transactions topic", usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
+                System.out.println(String.format("Record with (user name : %s, amount: %f, address :%s) was sent to -> %s topic", usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation(),TOPIC2));
             }
         }
-
     }
 
     public static Producer<String, Transaction> createKafkaProducer(String bootstrapServers) {
