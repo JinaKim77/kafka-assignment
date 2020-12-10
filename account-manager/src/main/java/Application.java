@@ -70,9 +70,6 @@ public class Application {
 
     private static void approveTransaction(Transaction transaction) {
         // Prints valid transaction information to the screen.
-
-        //System.out.println(String.format("Received received {user = %s, amount = %f, transactionLocation = %s)",
-                //transaction.getUser(),transaction.getAmount(),transaction.getTransactionLocation()));
         System.out.println(String.format("Received received (key : %s, value : %s) ", transaction.getUser() ,transaction.toString()));
     }
 

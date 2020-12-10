@@ -23,7 +23,6 @@ public class Application {
         Application kafkaApplication = new Application();
         Producer<String, Transaction> kafkaProducer = kafkaApplication.createKafkaProducer(BOOTSTRAP_SERVER);
 
-        //Ctrl + Alt + T
         try {
             kafkaApplication.processTransactions(incomingTransactionsReader,customerAddressDatabase, kafkaProducer);
         } catch (ExecutionException | InterruptedException e) {
@@ -46,7 +45,6 @@ public class Application {
         // location match or not.
         // Print record metadata information
 
-        // I have 3 partitions for valid-transactions and 2 partitions for suspicious-transactions
         for(IncomingTransactionsReader reader = incomingTransactionsReader ; reader.hasNext();  )
         {
             Transaction usersInfo = reader.next();
@@ -54,40 +52,21 @@ public class Application {
             String key = usersInfo.getUser();  // Key: user (String)
             Transaction value = usersInfo;  // Value: Transaction
 
-            // There are 2 topics (valid-transactions, suspicious-transactions)
-            // Create records to be sent to Kafka
-            //ProducerRecord<String, Transaction> record1 = new ProducerRecord<>(TOPIC1, key,value);
-            //ProducerRecord<String, Transaction> record2 = new ProducerRecord<>(TOPIC2, key,value);
-
-            //RecordMetadata recordMetadata1 = kafkaProducer.send(record1).get();  // to valid-transactions
-            //RecordMetadata recordMetadata2 = kafkaProducer.send(record2).get();  // to suspicious-transactions
-
-            //System.out.println(String.format("%s %f %s",usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
-
-
-
             //Get locations
             String userTransactionLocation = usersInfo.getTransactionLocation();  // transaction location
-            String residenceLo =  customerAddressDatabase.getUserResidence(key);  //home address
-
-            //To test
-            System.out.println(userTransactionLocation);
-            System.out.println(residenceLo);
+            String residenceLo =  customerAddressDatabase.getUserResidence(key);  // home address
 
             //Compare user residence to transaction location.
             if(userTransactionLocation.equals(residenceLo)){
-                System.out.println("locations match");
-                //System.out.println("it's a valid transaction, the message should be sent to the valid -transactions topic");
-
                 // Create records to be sent to Kafka
                 ProducerRecord<String, Transaction> record1 = new ProducerRecord<>(TOPIC1, key,value);
                 RecordMetadata recordMetadata1 = kafkaProducer.send(record1).get();  // to valid-transactions
 
-                //System.out.println(String.format("%s %f %s",usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
-
-                //System.out.println(String.format("Record with (key : %s, value : Transaction { user = %s, amount = %f, transactionLocation = %s}), was sent to (topic = %s )", key, usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation(),TOPIC1));
                 System.out.println(String.format("Record with (key : %s, value : %s), was sent to (topic = %s )", key,value,TOPIC1));
 
+                    // High value transactions (transaction value > 1000) will be sent to this topic : high-value-transactions
+                    // This will be sent only when it's valid transactions.
+                    // It won't be sent when it's suspicious-transactions.
                     if(usersInfo.getAmount() > 1000)
                     {
                         // Create records to be sent to Kafka
@@ -96,28 +75,12 @@ public class Application {
 
                         System.out.println(String.format("Record with (key : %s, value : %s ), was sent to (topic = %s )", key,value,TOPIC3));
                     }
-
             }else{
-                System.out.println("locations don't match");
-                //System.out.println("it's a suspicious transaction, the message should be sent to the suspicious-transactions topic");
-
                 // Create records to be sent to Kafka
                 ProducerRecord<String, Transaction> record2 = new ProducerRecord<>(TOPIC2, key,value);
                 RecordMetadata recordMetadata2 = kafkaProducer.send(record2).get();  // to suspicious-transactions
 
-                //System.out.println(String.format("%s %f %s",usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
-
-                //System.out.println(String.format("Record with (key : %s, value : Transaction { user = %s, amount = %f, transactionLocation = %s}), was sent to ( topic = %s )", key, usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation(),TOPIC2));
                 System.out.println(String.format("Record with (key : %s, value : %s ), was sent to (topic = %s )", key,value,TOPIC2));
-
-                    if(usersInfo.getAmount() > 1000)
-                    {
-                        // Create records to be sent to Kafka
-                        ProducerRecord<String, Transaction> record3 = new ProducerRecord<>(TOPIC3, key,value);
-                        RecordMetadata recordMetadata3 = kafkaProducer.send(record3).get();  // to high-value-transactions
-
-                        System.out.println(String.format("Record with (key : %s, value : %s ), was sent to (topic = %s )", key,value,TOPIC3));
-                    }
             }
         }
     }

@@ -74,10 +74,6 @@ public class Application {
 
     private static void recordTransactionForReporting(String topic, Transaction transaction) {
         // Print a different message depending on whether transaction is suspicious or valid
-        // Prints all transaction information to the screen, using a different message for suspicious and valid transactions
-
-        //System.out.println(String.format("Received record { user = %s, amount: %f, transactionLocation = %s } from topic %s)",
-          //      transaction.getUser(),transaction.getAmount(),transaction.getTransactionLocation(),topic ));
         System.out.println(String.format("Received received (key : %s, value : %s) from topic %s ", transaction.getUser() ,transaction.toString(), topic));
     }
 

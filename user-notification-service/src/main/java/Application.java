@@ -70,9 +70,6 @@ public class Application {
 
     private static void sendUserNotification(Transaction transaction) {
         // Prints suspicious transaction information to the screen.
-
-        //System.out.println(String.format("Received record {user = %s, amount = %f, transactionLocation = %s)",
-                //transaction.getUser(),transaction.getAmount(),transaction.getTransactionLocation() ));
         System.out.println(String.format("Received received (key : %s, value : %s) ", transaction.getUser() ,transaction.toString()));
     }
 
