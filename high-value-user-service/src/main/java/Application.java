@@ -9,7 +9,7 @@ import java.util.Properties;
 //Consumer 1 - user notification service (Receives Kafka messages with information on suspicious transactions from the suspicious-transactions topic.)
 public class Application {
 
-    private static final String TOPIC1 = "high-value-user-transactions";
+    private static final String TOPIC1 = "high-value-transactions";
 
     private static final String BOOTSTRAP_SERVER = "localhost:9092, localhost:9093, localhost:9094, localhost:9095";
 
