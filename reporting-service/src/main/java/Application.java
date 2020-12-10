@@ -10,7 +10,7 @@ public class Application {
     private static final String TOPIC1 = "valid-transactions";
     private static final String TOPIC2 = "suspicious-transactions";
 
-    private static final String BOOTSTRAP_SERVER = "localhost:9092, localhost:9093, localhost:9094";
+    private static final String BOOTSTRAP_SERVER = "localhost:9092, localhost:9093, localhost:9094, localhost:9095";
 
     public static void main(String[] args) {
         Application kafkaConsumerApp = new Application();
@@ -76,8 +76,9 @@ public class Application {
         // Print a different message depending on whether transaction is suspicious or valid
         // Prints all transaction information to the screen, using a different message for suspicious and valid transactions
 
-        System.out.println(String.format("Record Received (user name : %s, amount: %f, address :%s from topic name: %s)",
-                transaction.getUser(),transaction.getAmount(),transaction.getTransactionLocation(),topic ));
+        //System.out.println(String.format("Received record { user = %s, amount: %f, transactionLocation = %s } from topic %s)",
+          //      transaction.getUser(),transaction.getAmount(),transaction.getTransactionLocation(),topic ));
+        System.out.println(String.format("Received received (key : %s, value : %s) from topic %s ", transaction.getUser() ,transaction.toString(), topic));
     }
 
 }

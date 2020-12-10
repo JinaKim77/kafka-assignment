@@ -1,21 +1,22 @@
 import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
-//Consumer 3 - account manager (Receives Kafka messages with information on valid transactions from the valid-transactions topic)
+//Consumer 1 - user notification service (Receives Kafka messages with information on suspicious transactions from the suspicious-transactions topic.)
 public class Application {
 
-    private static final String TOPIC1 = "valid-transactions";
+    private static final String TOPIC1 = "high-value-user-transactions";
 
     private static final String BOOTSTRAP_SERVER = "localhost:9092, localhost:9093, localhost:9094, localhost:9095";
 
     public static void main(String[] args) {
         Application kafkaConsumerApp = new Application();
 
-        String consumerGroup = "account manager group";
+        String consumerGroup = "high value user service group";
 
         if (args.length == 1) {
             consumerGroup = args[0];
@@ -43,14 +44,13 @@ public class Application {
             for(ConsumerRecord<String, Transaction> record: consumerRecords){
                 //System.out.println(String.format("Record with (user name : %s ", record.key()));
                 Transaction transaction = record.value();
-                approveTransaction(transaction);
+                sendUserNotification(transaction);
             }
 
             //do some processing
 
             kafkaConsumer.commitAsync();
         }
-
     }
 
     public static Consumer<String, Transaction> createKafkaConsumer(String bootstrapServers, String consumerGroup) {
@@ -68,11 +68,11 @@ public class Application {
         return new KafkaConsumer<>(properties);
     }
 
-    private static void approveTransaction(Transaction transaction) {
-        // Prints valid transaction information to the screen.
+    private static void sendUserNotification(Transaction transaction) {
+        // Prints suspicious transaction information to the screen.
 
-        //System.out.println(String.format("Received received {user = %s, amount = %f, transactionLocation = %s)",
-                //transaction.getUser(),transaction.getAmount(),transaction.getTransactionLocation()));
+        //System.out.println(String.format("Received record {user = %s, amount = %f, transactionLocation = %s)",
+        //transaction.getUser(),transaction.getAmount(),transaction.getTransactionLocation() ));
         System.out.println(String.format("Received received (key : %s, value : %s) ", transaction.getUser() ,transaction.toString()));
     }
 

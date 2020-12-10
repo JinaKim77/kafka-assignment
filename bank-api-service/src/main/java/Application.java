@@ -12,8 +12,9 @@ public class Application {
 
     private static final String TOPIC1 = "valid-transactions";
     private static final String TOPIC2 = "suspicious-transactions";
+    private static final String TOPIC3 = "high-value-transactions";
 
-    private static final String BOOTSTRAP_SERVER = "localhost:9092, localhost:9093, localhost:9094";
+    private static final String BOOTSTRAP_SERVER = "localhost:9092, localhost:9093, localhost:9094, localhost:9095";
 
     public static void main(String[] args) {
         IncomingTransactionsReader incomingTransactionsReader = new IncomingTransactionsReader();
@@ -84,7 +85,18 @@ public class Application {
 
                 //System.out.println(String.format("%s %f %s",usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
 
-                System.out.println(String.format("Record with (user name : %s, amount: %f, address :%s) was sent to -> %s topic", usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation(),TOPIC1));
+                //System.out.println(String.format("Record with (key : %s, value : Transaction { user = %s, amount = %f, transactionLocation = %s}), was sent to (topic = %s )", key, usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation(),TOPIC1));
+                System.out.println(String.format("Record with (key : %s, value : %s), was sent to (topic = %s )", key,value,TOPIC1));
+
+                    if(usersInfo.getAmount() > 1000)
+                    {
+                        // Create records to be sent to Kafka
+                        ProducerRecord<String, Transaction> record3 = new ProducerRecord<>(TOPIC3, key,value);
+                        RecordMetadata recordMetadata3 = kafkaProducer.send(record3).get();  // to high-value-transactions
+
+                        System.out.println(String.format("Record with (key : %s, value : %s ), was sent to (topic = %s )", key,value,TOPIC3));
+                    }
+
             }else{
                 System.out.println("locations don't match");
                 //System.out.println("it's a suspicious transaction, the message should be sent to the suspicious-transactions topic");
@@ -95,7 +107,17 @@ public class Application {
 
                 //System.out.println(String.format("%s %f %s",usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation()));
 
-                System.out.println(String.format("Record with (user name : %s, amount: %f, address :%s) was sent to -> %s topic", usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation(),TOPIC2));
+                //System.out.println(String.format("Record with (key : %s, value : Transaction { user = %s, amount = %f, transactionLocation = %s}), was sent to ( topic = %s )", key, usersInfo.getUser(),usersInfo.getAmount(),usersInfo.getTransactionLocation(),TOPIC2));
+                System.out.println(String.format("Record with (key : %s, value : %s ), was sent to (topic = %s )", key,value,TOPIC2));
+
+                    if(usersInfo.getAmount() > 1000)
+                    {
+                        // Create records to be sent to Kafka
+                        ProducerRecord<String, Transaction> record3 = new ProducerRecord<>(TOPIC3, key,value);
+                        RecordMetadata recordMetadata3 = kafkaProducer.send(record3).get();  // to high-value-transactions
+
+                        System.out.println(String.format("Record with (key : %s, value : %s ), was sent to (topic = %s )", key,value,TOPIC3));
+                    }
             }
         }
     }
